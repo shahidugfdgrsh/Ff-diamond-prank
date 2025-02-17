@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Free Fire Diamond Purchase</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; padding: 20px; }
+        .container { max-width: 400px; margin: auto; padding: 20px; border: 1px solid #ccc; border-radius: 10px; }
+        .hidden { display: none; }
+        .loading { font-size: 20px; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <div class="container" id="step1">
+        <h2>Enter Your Free Fire ID</h2>
+        <input type="text" id="ff_id" placeholder="Enter your ID" required>
+        <button onclick="confirmID()">Confirm</button>
+    </div>
+    
+    <div class="container hidden" id="step2">
+        <h2>Choose Diamond Amount</h2>
+        <input type="number" id="diamond_amount" placeholder="Enter amount" min="100" step="100">
+        <p id="price_display"></p>
+        <button onclick="confirmAmount()">Next</button>
+    </div>
+    
+    <div class="container hidden" id="step3">
+        <h2>Select Payment Method</h2>
+        <select id="payment_method">
+            <option value="PayPal">PayPal</option>
+            <option value="Visa">Visa</option>
+            <option value="Bank">Bank Transfer</option>
+        </select>
+        <button onclick="processPayment()">Continue</button>
+    </div>
+    
+    <div class="container hidden" id="loading">
+        <p class="loading">Processing Payment...</p>
+    </div>
+    
+    <div class="container hidden" id="prank">
+        <h2>It's a prank! You're not getting any diamonds!</h2>
+        <button onclick="restartProcess()">Go Home</button>
+    </div>
+    
+    <script>
+        function confirmID() {
+            let ffID = document.getElementById("ff_id").value;
+            if (ffID.trim() === "") {
+                alert("Please enter your Free Fire ID.");
+                return;
+            }
+            document.getElementById("step1").classList.add("hidden");
+            document.getElementById("step2").classList.remove("hidden");
+        }
+        
+        function confirmAmount() {
+            let amount = parseInt(document.getElementById("diamond_amount").value);
+            if (isNaN(amount) || amount < 100) {
+                alert("Enter a valid diamond amount (minimum 100).");
+                return;
+            }
+            let price = (amount / 100) + (amount >= 1000 ? 0.20 : 0.05);
+            document.getElementById("price_display").innerText = `Total: $${price.toFixed(2)} (including tax)`;
+            document.getElementById("step2").classList.add("hidden");
+            document.getElementById("step3").classList.remove("hidden");
+        }
+        
+        function processPayment() {
+            document.getElementById("step3").classList.add("hidden");
+            document.getElementById("loading").classList.remove("hidden");
+            setTimeout(() => {
+                document.getElementById("loading").classList.add("hidden");
+                document.getElementById("prank").classList.remove("hidden");
+            }, 10000);
+        }
+        
+        function restartProcess() {
+            document.getElementById("prank").classList.add("hidden");
+            document.getElementById("step1").classList.remove("hidden");
+        }
+    </script>
+</body>
+</html>
