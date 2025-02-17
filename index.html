@@ -9,96 +9,108 @@
         .container { max-width: 400px; margin: auto; padding: 20px; border: 1px solid #ccc; border-radius: 10px; background-color: #222; }
         .hidden { display: none; }
         .loading { font-size: 20px; font-weight: bold; }
-        button { background-color: blue; color: white; padding: 10px; border: none; border-radius: 5px; cursor: pointer; }
+        button { background-color: blue; color: white; padding: 10px; border: none; border-radius: 5px; cursor: pointer; margin-top: 10px; }
         button:hover { background-color: darkblue; }
+        .loader { border: 5px solid #f3f3f3; border-top: 5px solid blue; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: auto; }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
     </style>
 </head>
 <body>
-    <div class="container" id="step0">
-        <h1>Welcome to the Game Store</h1>
-        <p>Select a game to buy in-game currency</p>
-        <select id="game_select">
-            <option value="Free Fire">Free Fire</option>
-            <option value="PUBG Mobile">PUBG Mobile</option>
-            <option value="COD Mobile">Call of Duty Mobile</option>
-        </select>
-        <button onclick="startProcess()">Continue</button>
-    </div>
-    
-    <div class="container hidden" id="step1">
-        <h2>Enter Your Free Fire ID</h2>
-        <input type="text" id="ff_id" placeholder="Enter your ID" required>
-        <button onclick="confirmID()">Confirm</button>
+    <div class="container" id="gameSelection">
+        <h1>Select a Game</h1>
+        <button onclick="selectGame('Free Fire')">Free Fire</button>
+        <button onclick="selectGame('PUBG')">PUBG</button>
+        <button onclick="selectGame('CODM')">CODM</button>
     </div>
     
     <div class="container hidden" id="step2">
-        <h2>Choose Diamond Amount</h2>
-        <input type="number" id="diamond_amount" placeholder="Enter amount" min="100" step="100">
-        <p id="price_display"></p>
-        <button onclick="confirmAmount()">Next</button>
+        <h2>Enter Your Game ID</h2>
+        <input type="text" id="game_id" placeholder="Enter your ID" required>
+        <button onclick="confirmID()">Confirm</button>
     </div>
     
     <div class="container hidden" id="step3">
+        <h2>Choose Diamond Amount</h2>
+        <input type="number" id="diamond_amount" placeholder="Enter amount" min="100" step="100" oninput="updatePrice()">
+        <p id="price_display"></p>
+        <button onclick="nextStep()">Continue</button>
+    </div>
+    
+    <div class="container hidden" id="step4">
         <h2>Select Payment Method</h2>
-        <select id="payment_method">
-            <option value="PayPal">PayPal</option>
-            <option value="Visa">Visa</option>
-            <option value="Bank">Bank Transfer</option>
-        </select>
+        <button onclick="selectPayment('PayPal')">PayPal</button>
+        <button onclick="selectPayment('Visa')">Visa</button>
+        <button onclick="selectPayment('Bank Transfer')">Bank Transfer</button>
+        <p id="selected_payment"></p>
         <button onclick="processPayment()">Continue</button>
     </div>
     
     <div class="container hidden" id="loading">
         <p class="loading">Processing Payment...</p>
+        <div class="loader"></div>
     </div>
     
-    <div class="container hidden" id="prank">
-        <h2>Diamond Sent✅ Thank you for using our website.</h2>
+    <div class="container hidden" id="success">
+        <h2>Diamonds Sent ✅</h2>
+        <p>Thank you for using our website.</p>
         <button onclick="restartProcess()">Go Home</button>
     </div>
     
     <script>
-        function startProcess() {
-            document.getElementById("step0").classList.add("hidden");
-            document.getElementById("step1").classList.remove("hidden");
-        }
-        
-        function confirmID() {
-            let ffID = document.getElementById("ff_id").value;
-            if (ffID.trim() === "") {
-                alert("Please enter your Free Fire ID.");
-                return;
-            }
-            document.getElementById("step1").classList.add("hidden");
+        function selectGame(game) {
+            document.getElementById("gameSelection").classList.add("hidden");
             document.getElementById("step2").classList.remove("hidden");
         }
         
-        function confirmAmount() {
-            let amount = parseInt(document.getElementById("diamond_amount").value);
-            if (isNaN(amount) || amount < 100) {
-                alert("Enter a valid diamond amount (minimum 100).");
+        function confirmID() {
+            let gameID = document.getElementById("game_id").value;
+            if (gameID.trim() === "") {
+                alert("Please enter your Game ID.");
                 return;
             }
-            let price = (amount / 100) + (amount >= 1000 ? 0.20 : 0.05);
-            document.getElementById("price_display").innerText = `Total: $${price.toFixed(2)} (including tax)`;
             document.getElementById("step2").classList.add("hidden");
             document.getElementById("step3").classList.remove("hidden");
         }
         
-        function processPayment() {
+        function updatePrice() {
+            let amount = parseInt(document.getElementById("diamond_amount").value);
+            if (!isNaN(amount) && amount >= 100) {
+                let price = (amount / 100) + (amount >= 1000 ? 0.20 : 0.05);
+                document.getElementById("price_display").innerText = `Total: $${price.toFixed(2)} (including tax)`;
+            } else {
+                document.getElementById("price_display").innerText = "";
+            }
+        }
+        
+        function nextStep() {
+            let amount = document.getElementById("diamond_amount").value;
+            if (amount.trim() === "" || parseInt(amount) < 100) {
+                alert("Enter a valid diamond amount (minimum 100).");
+                return;
+            }
             document.getElementById("step3").classList.add("hidden");
+            document.getElementById("step4").classList.remove("hidden");
+        }
+        
+        function selectPayment(method) {
+            document.getElementById("selected_payment").innerText = `Selected: ${method}`;
+        }
+        
+        function processPayment() {
+            document.getElementById("step4").classList.add("hidden");
             document.getElementById("loading").classList.remove("hidden");
             setTimeout(() => {
                 document.getElementById("loading").classList.add("hidden");
-                document.getElementById("prank").classList.remove("hidden");
-            }, 10000);
+                document.getElementById("success").classList.remove("hidden");
+            }, 5000);
         }
         
         function restartProcess() {
-            document.getElementById("prank").classList.add("hidden");
-            document.getElementById("step0").classList.remove("hidden");
-            document.getElementById("ff_id").value = "";
+            document.getElementById("success").classList.add("hidden");
+            document.getElementById("gameSelection").classList.remove("hidden");
+            document.getElementById("game_id").value = "";
             document.getElementById("diamond_amount").value = "";
+            document.getElementById("selected_payment").innerText = "";
         }
     </script>
 </body>
