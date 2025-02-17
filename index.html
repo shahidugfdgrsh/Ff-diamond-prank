@@ -3,16 +3,29 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Free Fire Diamond Purchase</title>
+    <title>Game Store - Buy In-Game Currency</title>
     <style>
-        body { font-family: Arial, sans-serif; text-align: center; padding: 20px; }
-        .container { max-width: 400px; margin: auto; padding: 20px; border: 1px solid #ccc; border-radius: 10px; }
+        body { font-family: Arial, sans-serif; text-align: center; padding: 20px; background-color: black; color: white; }
+        .container { max-width: 400px; margin: auto; padding: 20px; border: 1px solid #ccc; border-radius: 10px; background-color: #222; }
         .hidden { display: none; }
         .loading { font-size: 20px; font-weight: bold; }
+        button { background-color: blue; color: white; padding: 10px; border: none; border-radius: 5px; cursor: pointer; }
+        button:hover { background-color: darkblue; }
     </style>
 </head>
 <body>
-    <div class="container" id="step1">
+    <div class="container" id="step0">
+        <h1>Welcome to the Game Store</h1>
+        <p>Select a game to buy in-game currency</p>
+        <select id="game_select">
+            <option value="Free Fire">Free Fire</option>
+            <option value="PUBG Mobile">PUBG Mobile</option>
+            <option value="COD Mobile">Call of Duty Mobile</option>
+        </select>
+        <button onclick="startProcess()">Continue</button>
+    </div>
+    
+    <div class="container hidden" id="step1">
         <h2>Enter Your Free Fire ID</h2>
         <input type="text" id="ff_id" placeholder="Enter your ID" required>
         <button onclick="confirmID()">Confirm</button>
@@ -40,11 +53,16 @@
     </div>
     
     <div class="container hidden" id="prank">
-        <h2>It's a prank! You're not getting any diamonds!</h2>
+        <h2>Diamond Sent✅ Thank you for using our website.</h2>
         <button onclick="restartProcess()">Go Home</button>
     </div>
     
     <script>
+        function startProcess() {
+            document.getElementById("step0").classList.add("hidden");
+            document.getElementById("step1").classList.remove("hidden");
+        }
+        
         function confirmID() {
             let ffID = document.getElementById("ff_id").value;
             if (ffID.trim() === "") {
@@ -78,7 +96,9 @@
         
         function restartProcess() {
             document.getElementById("prank").classList.add("hidden");
-            document.getElementById("step1").classList.remove("hidden");
+            document.getElementById("step0").classList.remove("hidden");
+            document.getElementById("ff_id").value = "";
+            document.getElementById("diamond_amount").value = "";
         }
     </script>
 </body>
